@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Conductor Scan | IIITDMJ Transit - Conductor Terminal</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary": "#ffffff",
+            "status-gold-light": "#FEF3C7",
+            "on-tertiary-fixed": "#002113",
+            "on-primary-container": "#7490c3",
+            "primary-container": "#002855",
+            "secondary-fixed": "#cce5ff",
+            "tertiary": "#00190e",
+            "ticket-hologram-violet": "#8B5CF6",
+            "surface-container": "#e0f0ff",
+            "status-gold": "#F59E0B",
+            "on-secondary-container": "#00476e",
+            "surface-container-low": "#ebf5ff",
+            "surface": "#f6faff",
+            "on-surface": "#0e1d28",
+            "institute-navy-mid": "#1E3E62",
+            "tertiary-fixed-dim": "#4edea3",
+            "outline": "#747780",
+            "surface-container-high": "#daeaf9",
+            "background": "#f6faff",
+            "on-tertiary-fixed-variant": "#005236",
+            "status-mint-subtle": "#ECFDF5",
+            "error-container": "#ffdad6",
+            "secondary-container": "#5bb8fe",
+            "surface-variant": "#d4e4f3",
+            "primary-fixed": "#d6e3ff",
+            "surface-dim": "#ccdceb",
+            "transit-blue-subtle": "#E0F2FE",
+            "tertiary-container": "#00301e",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#e5f2ff",
+            "on-error": "#ffffff",
+            "inverse-primary": "#aac7fd",
+            "on-error-container": "#93000a",
+            "on-surface-variant": "#43474f",
+            "primary-fixed-dim": "#aac7fd",
+            "surface-tint": "#415f8f",
+            "institute-navy-dark": "#0B192C",
+            "outline-variant": "#c4c6d0",
+            "surface-card": "#FFFFFF",
+            "surface-bright": "#f6faff",
+            "surface-canvas": "#F8FAFC",
+            "error": "#ba1a1a",
+            "primary": "#001430",
+            "surface-glass-border": "rgba(255, 255, 255, 0.45)",
+            "secondary-fixed-dim": "#93ccff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d4e4f3",
+            "tertiary-fixed": "#6ffbbe",
+            "on-tertiary-container": "#00a472",
+            "on-secondary-fixed-variant": "#004b73",
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#23323d",
+            "on-background": "#0e1d28",
+            "secondary": "#006398",
+            "on-secondary-fixed": "#001d31",
+            "on-primary-fixed": "#001b3d",
+            "transit-blue-glow": "#38BDF8",
+            "on-primary-fixed-variant": "#284775",
+            "status-mint-glow": "#34D399",
+            "ticket-hologram-cyan": "#06B6D4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2.25rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "3rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "gutter-desktop": "1.5rem",
+            "margin-tablet": "2rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "label-mono-xs": ["JetBrains Mono"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "display-hero-mobile": ["Space Grotesk"],
+            "title-sm": ["Inter"],
+            "ticker-lg": ["JetBrains Mono"],
+            "label-mono": ["JetBrains Mono"],
+            "headline-lg": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "ticker-md": ["JetBrains Mono"],
+            "body-md": ["Inter"],
+            "display-hero": ["Space Grotesk"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display:inline-block; vertical-align:middle; line-height:1 }
+    .ticket-perforation-edge-l { position:absolute; left:-12px; width:24px; height:24px; border-radius:9999px; background-color:#f6faff }
+    .ticket-perforation-edge-r { position:absolute; right:-12px; width:24px; height:24px; border-radius:9999px; background-color:#f6faff }
+    .scanner-frame { border: 2px dashed rgba(56,189,248,0.3); border-radius: 12px; }
+  </style>
+<!-- html5-qrcode for scanning -->
+<script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script>
+</head>
+<body class="bg-surface-canvas text-on-surface font-body-md text-body-md antialiased selection:bg-secondary selection:text-on-secondary-container">
+<!-- HEADER (copied style from other pages) -->
+<header class="bg-primary-container dark:bg-institute-navy-dark text-on-primary dark:text-primary-fixed docked full-width top-0 z-50 border-b border-surface-glass-border">
+  <div class="flex justify-between items-center w-full px-space-md md:px-margin-desktop max-w-7xl mx-auto h-16">
+    <div class="flex items-center gap-space-sm">
+      <div class="w-9 h-9 rounded-lg bg-institute-navy-mid flex items-center justify-center text-transit-blue-glow shadow-inner border border-transit-blue-glow/30">
+        <span class="material-symbols-outlined" data-icon="directions_bus">directions_bus</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-headline-md font-headline-md font-bold tracking-tight text-on-primary dark:text-primary-fixed">IIITDMJ Transit</span>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-status-mint-glow animate-ping"></span>
+          <span class="text-label-mono-xs font-label-mono-xs text-secondary-fixed">Conductor Terminal • Online</span>
+        </div>
+      </div>
+    </div>
+    <nav class="hidden md:flex items-center gap-space-lg">
+      <a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow" href="1st.html">Dashboard</a>
+      <a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow" href="2nd.html">Passes</a>
+      <a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow" href="3rd.html">Payments</a>
+    </nav>
+    <div class="flex items-center gap-space-sm md:gap-space-md">
+      <div class="hidden lg:flex flex-col text-right pl-2 border-l border-primary-container/60">
+        <span class="text-title-sm font-title-sm text-on-primary text-xs leading-none">Mr. Tilak Singh</span>
+        <span class="text-label-mono-xs font-label-mono-xs text-primary-fixed/80">Badge: #EMP-0412</span>
+      </div>
+      <div class="flex items-center gap-1 text-on-primary-container">
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Profile"><span class="material-symbols-outlined">account_circle</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-space-md md:px-margin-desktop py-space-lg space-y-space-lg">
+  <section class="bg-surface-card rounded-xl border border-outline-variant/40 p-space-md md:p-space-lg shadow-lg">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h1 class="text-headline-md font-headline-md text-on-surface font-semibold">Conductor Scan • Verify Tickets</h1>
+        <p class="text-body-sm text-on-surface-variant mt-1">Use the camera to scan passenger QR codes or paste the ticket key to validate.</p>
+      </div>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-mint-subtle border border-status-mint-glow/50 text-on-tertiary-container text-label-mono-xs font-label-mono-xs">
+        <span class="w-2 h-2 rounded-full bg-status-mint-glow animate-pulse"></span>
+        LIVE: CONDUCTOR MODE
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Scanner column -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="scanner-frame p-4 bg-surface-canvas rounded-lg">
+          <div id="reader" class="w-full h-72 bg-black/5 rounded-md flex items-center justify-center"></div>
+          <div class="mt-3 flex items-center gap-3">
+            <button id="startBtn" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-institute-navy-mid">Start Camera</button>
+            <button id="stopBtn" class="px-4 py-2 rounded-lg bg-surface-card border border-outline-variant hover:bg-surface-container-low">Stop</button>
+            <button id="flipBtn" class="px-3 py-2 rounded-lg bg-surface-card border border-outline-variant hover:bg-surface-container-low">Flip Camera</button>
+            <div class="ml-auto text-label-mono-xs text-on-surface-variant">Camera: <span id="cameraLabel">rear</span></div>
+          </div>
+          <div class="mt-3">
+            <label class="text-label-mono-xs font-label-mono-xs text-outline">Manual Paste / Enter Ticket Key</label>
+            <div class="mt-2 flex gap-2">
+              <input id="manualInput" class="flex-1 h-11 px-3 rounded-lg border border-outline-variant bg-surface-card" placeholder="Paste scanned QR text here..." />
+              <button id="validateManual" class="px-4 py-2 rounded-lg bg-secondary-container text-on-secondary-container border border-secondary">Validate</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="logArea" class="bg-surface-card p-3 rounded-lg border border-outline-variant/40 text-label-mono-xs text-on-surface-variant">
+          <div id="logEntries">No scans yet. Awaiting input or camera scan.</div>
+        </div>
+      </div>
+
+      <!-- Verification Card column -->
+      <div class="lg:col-span-1">
+        <div id="verificationCard" class="bg-surface-card rounded-xl border border-slate-200 shadow-xl overflow-hidden relative hidden">
+          <div class="h-3 w-full bg-status-gold-light/60 animate-hologram-strip"></div>
+          <div class="p-space-md">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary-container">verified</span>
+                <div>
+                  <span class="font-headline-md text-headline-md font-bold text-tertiary-container tracking-wider" id="verStatus">VALID TICKET</span>
+                  <span class="block text-label-mono-xs font-label-mono-xs text-tertiary" id="verSub">INSTITUTE SYSTEM CONFIRMED</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase block">Ticket ID</span>
+                <span class="font-ticker-md text-ticker-md text-primary font-bold tracking-tight" id="verTicket">—</span>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 gap-3 bg-surface-canvas p-3 rounded-lg border border-slate-200">
+              <div>
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Passenger</span>
+                <p class="font-title-sm text-title-sm font-bold text-primary" id="verName">—</p>
+                <span class="text-body-sm text-on-surface-variant" id="verRoll">—</span>
+              </div>
+              <div>
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Route</span>
+                <p class="font-title-sm text-title-sm font-semibold text-primary" id="verRoute">—</p>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-label-mono-xs font-label-mono-xs text-outline block">Conductor</span>
+                  <span class="font-title-sm text-title-sm font-semibold text-primary">Mr. Tilak Singh</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-label-mono-xs font-label-mono-xs text-outline block">Vehicle</span>
+                  <span class="font-bold text-primary">Bus No. 1</span>
+                  <span class="block text-label-mono-xs text-on-surface-variant">MP20 ZL1297</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center gap-2">
+              <button id="markBoarded" class="flex-1 px-3 py-2 rounded-lg bg-primary-container text-on-primary">Mark as Boarded</button>
+              <button id="flagInvalid" class="px-3 py-2 rounded-lg bg-error text-on-error">Flag</button>
+            </div>
+
+            <div class="mt-3 text-center text-label-mono-xs text-on-surface-variant">Last verified at <span id="verTime">—</span></div>
+          </div>
+        </div>
+
+        <div id="invalidCard" class="bg-error-container/20 border border-error-container text-on-error rounded-xl p-4 text-center hidden">
+          <span class="material-symbols-outlined text-3xl">qr_code_2</span>
+          <h3 class="text-title-sm font-title-sm font-bold mt-2">INVALID OR EXPIRED TICKET</h3>
+          <p class="text-body-sm text-on-surface-variant mt-1">Ask passenger to present institute ID and re-verify. If suspicious, escalate to security.</p>
+        </div>
+
+        <div class="mt-4 bg-surface-card p-3 rounded-lg border border-outline-variant/40 text-label-mono-xs text-on-surface-variant">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-sm">info</span>
+            <span class="font-bold">Offline Mode</span>
+          </div>
+          <p class="text-xs">Cached verification allowed for 45 mins. This terminal will accept cached tokens while offline.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-primary dark:bg-institute-navy-dark text-on-primary docked full-width bottom mt-space-xl">
+  <div class="w-full py-space-lg px-space-md md:px-margin-desktop max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-space-md">
+    <div class="flex flex-col items-center md:items-start">
+      <span class="text-title-sm font-title-sm font-bold text-on-primary">IIITDMJ Transit Conductor Console</span>
+      <p class="text-body-sm text-body-sm text-outline-variant mt-1">© 2025 PDPM IIITDM Jabalpur. Fleet Operations.</p>
+    </div>
+    <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-body-sm font-body-sm">
+      <a class="text-outline-variant hover:text-transit-blue-glow" href="1st.html">Dashboard</a>
+      <a class="text-outline-variant hover:text-transit-blue-glow" href="2nd.html">Sample Ticket</a>
+      <a class="text-outline-variant hover:text-transit-blue-glow" href="3rd.html">Payments</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Simple simulated allowlist for demonstration. In production, replace with server-side validation.
+  const validTickets = {
+    "IIITDMJ-TKT-2025-0515-8821B": { name: "Aryan Sharma", roll: "2022CS104", route: "Institute → Sadar", ticketId: "TKT-2025-0515-8821B" },
+    "DMJ-2025-9941": { name: "Riya Patel", roll: "2021EE212", route: "Campus → Junction", ticketId: "DMJ-2025-9941" }
+  };
+
+  let currentCamera = { facingMode: "environment" };
+  let html5QrcodeScanner = null;
+  let currentDeviceId = null;
+
+  const readerId = "reader";
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const flipBtn = document.getElementById('flipBtn');
+  const logEntries = document.getElementById('logEntries');
+  const verificationCard = document.getElementById('verificationCard');
+  const invalidCard = document.getElementById('invalidCard');
+
+  function appendLog(text) {
+    const ts = new Date().toLocaleTimeString();
+    logEntries.innerHTML = `<div class=\"mb-1\"><strong>[${ts}]</strong> ${text}</div>` + logEntries.innerHTML;
+  }
+
+  function showVerification(data) {
+    verificationCard.classList.remove('hidden');
+    invalidCard.classList.add('hidden');
+    document.getElementById('verStatus').textContent = 'VALID TICKET';
+    document.getElementById('verSub').textContent = 'INSTITUTE SYSTEM CONFIRMED';
+    document.getElementById('verTicket').textContent = data.ticketId || '—';
+    document.getElementById('verName').textContent = data.name || '—';
+    document.getElementById('verRoll').textContent = data.roll ? 'Roll: ' + data.roll : '';
+    document.getElementById('verRoute').textContent = data.route || '—';
+    document.getElementById('verTime').textContent = new Date().toLocaleString();
+  }
+
+  function showInvalid() {
+    verificationCard.classList.add('hidden');
+    invalidCard.classList.remove('hidden');
+  }
+
+  function validateTicketString(text) {
+    // basic normalization
+    const key = text.trim();
+    if (validTickets[key]) return { ok: true, data: validTickets[key] };
+
+    // fallback pattern checking (e.g., contains TKT-2025)
+    if (/TKT-2025-\d{4}/.test(key) || /DMJ-2025-\d{4}/.test(key)) {
+      // treat pattern-matched but unknown as expired/used
+      return { ok: false, reason: 'Expired or already used' };
+    }
+
+    return { ok: false, reason: 'Invalid QR payload' };
+  }
+
+  async function startScanner() {
+    if (html5QrcodeScanner) return;
+
+    const html5QrCode = new Html5Qrcode(readerId, /* verbose= */ false);
+    html5QrcodeScanner = html5QrCode;
+
+    const config = { fps: 10, qrbox: { width: 300, height: 300 }, facingMode: (currentCamera.facingMode || 'environment') };
+
+    try {
+      const cameras = await Html5Qrcode.getCameras();
+      if (cameras && cameras.length) {
+        // choose device based on facing mode if possible
+        const preferred = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
+        currentDeviceId = preferred.id;
+      }
+    } catch (err) {
+      console.warn('Could not get cameras', err);
+    }
+
+    try {
+      await html5QrCode.start(
+        currentDeviceId ? { deviceId: { exact: currentDeviceId } } : { facingMode: "environment" },
+        config,
+        qrCodeMessage => {
+          appendLog('Scanned: ' + qrCodeMessage);
+          const res = validateTicketString(qrCodeMessage);
+          if (res.ok) {
+            showVerification(res.data);
+          } else {
+            showInvalid();
+            appendLog('Validation failed: ' + (res.reason || 'Unknown'));
+          }
+        },
+        errorMessage => {
+          // scanning errors or no-op
+        }
+      );
+      appendLog('Camera started');
+    } catch (err) {
+      appendLog('Failed to start camera: ' + err);
+    }
+  }
+
+  async function stopScanner() {
+    if (!html5QrcodeScanner) return;
+    try {
+      await html5QrcodeScanner.stop();
+      html5QrcodeScanner.clear();
+      html5QrcodeScanner = null;
+      appendLog('Camera stopped');
+    } catch (err) {
+      appendLog('Error stopping camera: ' + err);
+    }
+  }
+
+  startBtn.addEventListener('click', () => startScanner());
+  stopBtn.addEventListener('click', () => stopScanner());
+
+  flipBtn.addEventListener('click', async () => {
+    // attempt to flip to another camera device if available
+    try {
+      const cams = await Html5Qrcode.getCameras();
+      if (!cams || cams.length < 2) {
+        appendLog('No alternate camera found');
+        return;
+      }
+      // choose next camera id
+      const idx = cams.findIndex(c => c.id === currentDeviceId);
+      const next = cams[(idx + 1) % cams.length];
+      currentDeviceId = next.id;
+      document.getElementById('cameraLabel').textContent = next.label || 'camera';
+      if (html5QrcodeScanner) {
+        await stopScanner();
+        await startScanner();
+      }
+    } catch (err) {
+      appendLog('Flip error: ' + err);
+    }
+  });
+
+  document.getElementById('validateManual').addEventListener('click', () => {
+    const txt = document.getElementById('manualInput').value || '';
+    if (!txt) return appendLog('Manual validate: empty input');
+    appendLog('Manual validate: ' + txt);
+    const res = validateTicketString(txt);
+    if (res.ok) showVerification(res.data); else showInvalid();
+  });
+
+  // mark boarded / flag actions (local simulated)
+  document.getElementById('markBoarded').addEventListener('click', () => {
+    appendLog('Marked ticket as boarded: ' + document.getElementById('verTicket').textContent);
+    alert('Ticket marked as boarded.');
+  });
+  document.getElementById('flagInvalid').addEventListener('click', () => {
+    appendLog('Flagged suspicious/invalid ticket.');
+    alert('Ticket flagged. Please escalate to security if required.');
+  });
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    if (html5QrcodeScanner) stopScanner();
+  });
+</script>
+</body></html>
