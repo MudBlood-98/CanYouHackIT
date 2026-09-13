@@ -1,5 +1,5 @@
 const fs = require('fs');
-const file = 'c:/Users/amash/Desktop/cyhi3/frontend/4th.html';
+const file = 'c:/Users/amash/Desktop/cyhi3/frontend/index.html';
 let data = fs.readFileSync(file, 'utf8');
 const idx = data.indexOf('<!-- Micro-interaction: Countdown timer script for OTP -->');
 if (idx !== -1) {

@@ -10,20 +10,20 @@ window.apiFetch = async (url, options = {}) => {
     if (res.status === 401 || res.status === 403) {
         localStorage.removeItem('transit_token');
         localStorage.removeItem('transit_user');
-        window.location.href = '4th.html';
+        window.location.href = 'index.html';
     }
     return res;
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     const currentPath = window.location.pathname.split('/').pop() || '1st.html';
-    const isPublicPage = currentPath === '4th.html' || currentPath === 'forgotpassword.html';
+    const isPublicPage = currentPath === 'index.html' || currentPath === 'forgotpassword.html';
     const token = localStorage.getItem('transit_token');
     const userStr = localStorage.getItem('transit_user');
     let user = userStr ? JSON.parse(userStr) : null;
 
     if (!token && !isPublicPage) {
-        window.location.href = '4th.html';
+        window.location.href = 'index.html';
         return;
     }
 
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             localStorage.removeItem('transit_token');
             localStorage.removeItem('transit_user');
-            window.location.href = '4th.html';
+            window.location.href = 'index.html';
         });
     }
 

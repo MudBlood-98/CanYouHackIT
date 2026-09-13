@@ -71,7 +71,7 @@ app.use((err, req, res, next) => {
 
 // Fallback for SPA or static routing (serve 1st.html for root)
 app.get('/', (req, res) => {
-  res.redirect('/4th.html');
+  res.redirect('/index.html');
 });
 
 const PORT = process.env.PORT || 3000;

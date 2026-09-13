@@ -9,7 +9,7 @@ const navigationConfig = {
     dashboard: "1st.html",
     sampleTicket: "2nd.html",
     payments: "3rd.html",
-    helpCenter: "4th.html",
+    helpCenter: "index.html",
     account: "account.html",
     notifications: "notifications.html"
   },
