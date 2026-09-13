@@ -171,17 +171,17 @@
 </div>
 <!-- Navigation Links (Active item mapping: Quick Booking intent) -->
 <nav class="hidden md:flex items-center space-x-6 text-body-md font-body-md">
-<a class="text-on-primary-container font-medium hover:text-transit-blue-glow transition-colors duration-150" href="4th.html">Live Dashboard</a>
-<a class="text-on-primary-container font-medium hover:text-transit-blue-glow transition-colors duration-150" href="4th.html">Timetable</a>
+<a class="text-on-primary-container font-medium hover:text-transit-blue-glow transition-colors duration-150" href="1st.html">Live Dashboard</a>
+<a class="text-on-primary-container font-medium hover:text-transit-blue-glow transition-colors duration-150" href="1st.html#timetable">Timetable</a>
 <a class="text-transit-blue-glow border-b-2 border-transit-blue-glow pb-1 font-semibold" href="3rd.html">Quick Booking</a>
 <a class="text-on-primary-container font-medium hover:text-transit-blue-glow transition-colors duration-150" href="2nd.html">My Passes</a>
 </nav>
 <!-- Trailing Action Icons & Scan QR -->
 <div class="flex items-center gap-space-sm">
-<button aria-label="Notifications" class="p-2 text-on-primary-container hover:text-transit-blue-glow transition-colors" title="Notifications">
+<button aria-label="Notifications" class="p-2 text-on-primary-container hover:text-transit-blue-glow transition-colors" title="Notifications" onclick="window.location.href='notifications.html'">
 <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
 </button>
-<button aria-label="Account" class="p-1.5 text-on-primary-container hover:text-transit-blue-glow transition-colors" title="Account">
+<button aria-label="Account" class="p-1.5 text-on-primary-container hover:text-transit-blue-glow transition-colors" title="Account" onclick="window.location.href='account.html'">
 <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
 </button>
 </div>
@@ -192,12 +192,12 @@
 <div class="max-w-7xl mx-auto px-space-md md:px-margin-desktop py-3 flex flex-wrap items-center justify-between gap-4">
 <!-- Precision Breadcrumbs -->
 <nav aria-label="Breadcrumb" class="flex items-center space-x-2 text-label-mono font-label-mono">
-<a class="text-outline hover:text-primary transition-colors flex items-center gap-1" href="#">
+<a class="text-outline hover:text-primary transition-colors flex items-center gap-1" href="1st.html">
 <span class="material-symbols-outlined text-sm" data-icon="dashboard">dashboard</span>
 <span>Dashboard</span>
 </a>
 <span class="text-outline-variant">/</span>
-<a class="text-outline hover:text-primary transition-colors" href="#">Slot Selection</a>
+<a class="text-outline hover:text-primary transition-colors" href="1st.html#timetable">Slot Selection</a>
 <span class="text-outline-variant">/</span>
 <span class="text-primary font-semibold flex items-center gap-1 bg-surface-container-low px-2 py-0.5 rounded text-secondary">
 <span class="material-symbols-outlined text-sm" data-icon="credit_card">credit_card</span>
@@ -237,9 +237,9 @@
 </div>
 </div>
 <!-- Layout Grid: Left (Trip & Fare Summary), Right (Direct Payment Gateway) -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start min-w-0">
 <!-- LEFT COLUMN: Booking Summary & Policy (5 cols on Desktop) -->
-<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="lg:col-span-5 flex flex-col gap-6 min-w-0">
 <!-- Physical Ticket Metaphor: Booking Details Card -->
 <div class="bg-surface-card rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden relative">
 <!-- Top Card Header Banner -->
@@ -284,10 +284,10 @@
 <div class="p-5 bg-surface-container-low/60 grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-outline-variant/30">
 <div>
 <span class="text-label-mono-xs font-label-mono-xs text-outline block">DEPARTURE SCHEDULE</span>
-<p class="text-title-sm font-title-sm font-semibold text-primary mt-0.5">Today, 05:15 PM</p>
+<p id="selected-trip-departure" class="text-title-sm font-title-sm font-semibold text-primary mt-0.5">Loading schedule...</p>
 <p class="text-label-mono-xs font-label-mono-xs text-error font-medium flex items-center gap-1 mt-0.5">
 <span class="material-symbols-outlined text-xs" data-icon="lock_clock">lock_clock</span>
-                Boarding closes 05:10 PM
+                <span id="selected-trip-boarding-close">Boarding closes at departure</span>
               </p>
 </div>
 <div>
@@ -367,7 +367,7 @@
 </div>
 </div>
 <!-- RIGHT COLUMN: Direct Conductor UPI Payment Gateway (7 cols on Desktop) -->
-<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="lg:col-span-7 flex flex-col gap-6 min-w-0">
 <div class="bg-surface-card rounded-xl border border-outline-variant/50 shadow-md p-6 sm:p-8 relative overflow-hidden">
 <!-- Background Subtle Gradient Ring Accent -->
 <div class="absolute -right-20 -top-20 w-64 h-64 bg-secondary-fixed-dim/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -588,7 +588,7 @@
 <span class="text-label-mono-xs font-label-mono-xs text-outline mt-2">PRESENT SCREEN TO CONDUCTOR TILAK SINGH</span>
 </div>
 <div class="mt-6 flex gap-3">
-<button class="w-full py-2.5 rounded-lg bg-primary-container text-on-primary font-title-sm font-semibold hover:bg-institute-navy-mid transition-colors" onclick="closeModal()">
+<button class="w-full py-2.5 rounded-lg bg-primary-container text-on-primary font-title-sm font-semibold hover:bg-institute-navy-mid transition-colors" onclick="window.location.href='2nd.html'">
             Done &amp; Save Pass
           </button>
 </div>
@@ -607,20 +607,20 @@
 </div>
 <!-- Footer Navigation Links from JSON -->
 <nav class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-body-sm font-body-sm">
-<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#">Campus Fleet Portal</a>
-<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#">Route Map Directory</a>
-<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#">Conductor Terminal</a>
-<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#">Support Desk</a>
-<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#">Security Verification</a>
+<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="1st.html">Campus Fleet Portal</a>
+<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="1st.html">Route Map Directory</a>
+<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="conductor.html">Conductor Terminal</a>
+<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#support">Support Desk</a>
+<a class="text-outline-variant hover:text-transit-blue-glow transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#verification">Security Verification</a>
 </nav>
 </div>
 </footer>
 <!-- Micro-interactions Script (Timer, Copy, and Ticket Modal) -->
 <script>
-    // 5-minute countdown emulation (4 mins 48 secs initial)
     let totalSeconds = 288;
     const qrTimer = document.getElementById('qr-timer');
     const headerTimer = document.getElementById('header-countdown');
+    let activeTripId = null;
 
     function updateTimer() {
       if (totalSeconds <= 0) {
@@ -637,7 +637,6 @@
     }
     setInterval(updateTimer, 1000);
 
-    // Copy UPI VPA to clipboard with visual confirmation
     function copyUPI() {
       const upiText = "transit.bus1.tilak@sbi";
       navigator.clipboard.writeText(upiText).then(() => {
@@ -649,20 +648,86 @@
           copyLabel.textContent = "Copy";
           copyIcon.textContent = "content_copy";
         }, 2000);
-      }).catch(err => {
-        console.error('Failed to copy text: ', err);
       });
     }
 
-    // Modal Pass Display Trigger
-    function triggerTicketIssuance() {
-      const modal = document.getElementById('ticket-modal');
-      modal.classList.remove('hidden');
+    async function loadTripDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tripId = urlParams.get('tripId');
+        if (!tripId) {
+            alert('No trip selected!');
+            window.location.href = '1st.html';
+            return;
+        }
+        activeTripId = tripId;
+
+        try {
+            const res = await window.apiFetch('/api/trips');
+            const trips = await res.json();
+            const trip = trips.find(t => t.id === tripId);
+            
+            if (trip) {
+              const departure = new Date(trip.departureAt || `${trip.tripDate}T${trip.departureTime}:00+05:30`);
+              const departureText = departure.toLocaleString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                weekday: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              const boardingClose = new Date(departure.getTime() - 5 * 60 * 1000);
+              const boardingCloseText = boardingClose.toLocaleTimeString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              document.getElementById('selected-trip-departure').textContent = departureText;
+              document.getElementById('selected-trip-boarding-close').textContent = `Boarding closes ${boardingCloseText}`;
+            } else {
+                alert('Trip not found or booking closed.');
+                window.location.href = '1st.html';
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function triggerTicketIssuance() {
+        const btn = document.getElementById('confirm-pay-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Processing...';
+        btn.disabled = true;
+
+        try {
+            const res = await window.apiFetch('/api/bookings', {
+                method: 'POST',
+                body: JSON.stringify({ tripId: activeTripId })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                const modal = document.getElementById('ticket-modal');
+                // Optional: update modal text with data.booking.qrCode
+                modal.classList.remove('hidden');
+            } else {
+                alert('Booking failed: ' + (data.error || 'Unknown error'));
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        } catch (err) {
+            alert('Network error.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     }
 
     function closeModal() {
       const modal = document.getElementById('ticket-modal');
       modal.classList.add('hidden');
+      window.location.href = '2nd.html'; // Redirect to tickets page
     }
-  </script>
+
+    document.addEventListener('DOMContentLoaded', loadTripDetails);
+</script>
+<script src="state.js"></script>
 </body></html>
+

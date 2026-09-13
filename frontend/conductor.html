@@ -148,8 +148,8 @@
         <span class="text-label-mono-xs font-label-mono-xs text-primary-fixed/80">Badge: #EMP-0412</span>
       </div>
       <div class="flex items-center gap-1 text-on-primary-container">
-        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications"><span class="material-symbols-outlined">notifications</span></button>
-        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Profile"><span class="material-symbols-outlined">account_circle</span></button>
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications" onclick="window.location.href='notifications.html'"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Profile" onclick="window.location.href='account.html?role=conductor'"><span class="material-symbols-outlined">account_circle</span></button>
       </div>
     </div>
   </div>
@@ -277,12 +277,6 @@
 </footer>
 
 <script>
-  // Simple simulated allowlist for demonstration. In production, replace with server-side validation.
-  const validTickets = {
-    "IIITDMJ-TKT-2025-0515-8821B": { name: "Aryan Sharma", roll: "2022CS104", route: "Institute → Sadar", ticketId: "TKT-2025-0515-8821B" },
-    "DMJ-2025-9941": { name: "Riya Patel", roll: "2021EE212", route: "Campus → Junction", ticketId: "DMJ-2025-9941" }
-  };
-
   let currentCamera = { facingMode: "environment" };
   let html5QrcodeScanner = null;
   let currentDeviceId = null;
@@ -294,10 +288,12 @@
   const logEntries = document.getElementById('logEntries');
   const verificationCard = document.getElementById('verificationCard');
   const invalidCard = document.getElementById('invalidCard');
+  
+  let lastScannedTicketId = null;
 
   function appendLog(text) {
     const ts = new Date().toLocaleTimeString();
-    logEntries.innerHTML = `<div class=\"mb-1\"><strong>[${ts}]</strong> ${text}</div>` + logEntries.innerHTML;
+    logEntries.innerHTML = `<div class="mb-1"><strong>[${ts}]</strong> ${text}</div>` + logEntries.innerHTML;
   }
 
   function showVerification(data) {
@@ -306,29 +302,63 @@
     document.getElementById('verStatus').textContent = 'VALID TICKET';
     document.getElementById('verSub').textContent = 'INSTITUTE SYSTEM CONFIRMED';
     document.getElementById('verTicket').textContent = data.ticketId || '—';
-    document.getElementById('verName').textContent = data.name || '—';
-    document.getElementById('verRoll').textContent = data.roll ? 'Roll: ' + data.roll : '';
-    document.getElementById('verRoute').textContent = data.route || '—';
+    document.getElementById('verName').textContent = data.passenger || '—';
+    document.getElementById('verRoll').textContent = data.rollNumber ? 'Roll: ' + data.rollNumber : '';
+    document.getElementById('verRoute').textContent = data.trip || '—';
     document.getElementById('verTime').textContent = new Date().toLocaleString();
+    
+    // Hide Mark as Boarded button since API already marked it as boarded.
+    const markBoardBtn = document.getElementById('markBoarded');
+    if (markBoardBtn) {
+        markBoardBtn.textContent = 'Already Boarded';
+        markBoardBtn.disabled = true;
+        markBoardBtn.classList.replace('bg-primary-container', 'bg-status-mint-glow');
+        markBoardBtn.classList.replace('text-on-primary', 'text-tertiary-container');
+    }
   }
 
-  function showInvalid() {
+  function showInvalid(reason) {
     verificationCard.classList.add('hidden');
     invalidCard.classList.remove('hidden');
+    const reasonP = invalidCard.querySelector('p');
+    if(reason) reasonP.textContent = `Reason: ${reason}`;
   }
 
-  function validateTicketString(text) {
-    // basic normalization
-    const key = text.trim();
-    if (validTickets[key]) return { ok: true, data: validTickets[key] };
-
-    // fallback pattern checking (e.g., contains TKT-2025)
-    if (/TKT-2025-\d{4}/.test(key) || /DMJ-2025-\d{4}/.test(key)) {
-      // treat pattern-matched but unknown as expired/used
-      return { ok: false, reason: 'Expired or already used' };
+  async function validateTicketString(text) {
+    try {
+        const response = await window.apiFetch('/api/conductor/verify', {
+            method: 'POST',
+            body: JSON.stringify({ qrPayload: text })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.message === 'VALID') {
+          let ticketId = text;
+          try {
+            ticketId = JSON.parse(text).tkt || text;
+          } catch (parseError) {
+            // Manual validation accepts the displayed ticket number.
+          }
+          return { ok: true, data: { ...result, ticketId } };
+        } else {
+            return { ok: false, reason: result.reason || result.error || 'Validation failed' };
+        }
+    } catch(err) {
+        return { ok: false, reason: 'Network error or invalid payload' };
     }
+  }
 
-    return { ok: false, reason: 'Invalid QR payload' };
+  async function processScan(qrCodeMessage) {
+    appendLog('Scanned: ' + qrCodeMessage);
+    const res = await validateTicketString(qrCodeMessage);
+    if (res.ok) {
+      showVerification(res.data);
+      appendLog('Success: Ticket verified and boarded.');
+    } else {
+      showInvalid(res.reason);
+      appendLog('Validation failed: ' + (res.reason || 'Unknown'));
+    }
   }
 
   async function startScanner() {
@@ -355,14 +385,7 @@
         currentDeviceId ? { deviceId: { exact: currentDeviceId } } : { facingMode: "environment" },
         config,
         qrCodeMessage => {
-          appendLog('Scanned: ' + qrCodeMessage);
-          const res = validateTicketString(qrCodeMessage);
-          if (res.ok) {
-            showVerification(res.data);
-          } else {
-            showInvalid();
-            appendLog('Validation failed: ' + (res.reason || 'Unknown'));
-          }
+          processScan(qrCodeMessage);
         },
         errorMessage => {
           // scanning errors or no-op
@@ -414,16 +437,10 @@
   document.getElementById('validateManual').addEventListener('click', () => {
     const txt = document.getElementById('manualInput').value || '';
     if (!txt) return appendLog('Manual validate: empty input');
-    appendLog('Manual validate: ' + txt);
-    const res = validateTicketString(txt);
-    if (res.ok) showVerification(res.data); else showInvalid();
+    processScan(txt);
   });
 
-  // mark boarded / flag actions (local simulated)
-  document.getElementById('markBoarded').addEventListener('click', () => {
-    appendLog('Marked ticket as boarded: ' + document.getElementById('verTicket').textContent);
-    alert('Ticket marked as boarded.');
-  });
+  // flag actions (local simulated)
   document.getElementById('flagInvalid').addEventListener('click', () => {
     appendLog('Flagged suspicious/invalid ticket.');
     alert('Ticket flagged. Please escalate to security if required.');
@@ -434,4 +451,7 @@
     if (html5QrcodeScanner) stopScanner();
   });
 </script>
+<script src="state.js"></script>
 </body></html>
+
+

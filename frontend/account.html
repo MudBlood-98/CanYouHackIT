@@ -162,10 +162,10 @@
         <a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="3rd.html">Quick Booking</a>
       </nav>
       <div class="flex items-center gap-space-sm md:gap-space-md">
-        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications" aria-label="Notifications">
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications" aria-label="Notifications" onclick="window.location.href='notifications.html'">
           <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
         </button>
-        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Account" aria-label="Account">
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Account" aria-label="Account" onclick="window.location.href='account.html'">
           <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
         </button>
       </div>
@@ -186,9 +186,14 @@
     </nav>
 
     <!-- Page Title -->
-    <div class="mb-space-lg">
-      <h1 class="text-headline-lg font-headline-lg text-on-surface font-semibold">Account Details</h1>
-      <p class="text-body-sm text-on-surface-variant mt-1">Manage your profile and account settings.</p>
+    <div class="mb-space-lg flex justify-between items-center">
+      <div>
+        <h1 class="text-headline-lg font-headline-lg text-on-surface font-semibold">Account Details</h1>
+        <p class="text-body-sm text-on-surface-variant mt-1">Manage your profile and account settings.</p>
+      </div>
+      <button id="logout-btn" class="px-4 py-2 bg-error-container text-on-error-container rounded-lg font-semibold hover:bg-error-container/80 transition-colors">
+        Logout
+      </button>
     </div>
 
     <!-- Main Content Grid -->
@@ -325,63 +330,23 @@
   </footer>
 
   <script>
-    // Mock user data - Backend will replace this
-    const mockUsers = {
-      student: {
-        id: "STU-2022-001",
-        role: "student",
-        name: "Aryan Sharma",
-        rollNumber: "2022CS104",
-        instituteEmail: "aryan.sharma@iiitdmj.ac.in",
-        profileImage: null,
-        activeSessionId: "#JBP-TR-8821"
-      },
-      conductor: {
-        id: "EMP-0412",
-        role: "conductor",
-        name: "Mr. Tilak Singh",
-        phone: "+91 9826346178",
-        profileImage: null,
-        busNumber: "Bus #1",
-        registrationNumber: "MP20 ZL1297",
-        dutyTrips: [
-          {
-            id: "TRIP-001",
-            departureTime: "08:30 AM",
-            busNumber: "Bus #1",
-            startPoint: "IIITDMJ Main Gate",
-            destination: "Sadar Cantt Market",
-            via: "Russell Chowk, Ghamapur",
-            status: "COMPLETED"
-          },
-          {
-            id: "TRIP-002",
-            departureTime: "12:00 PM",
-            busNumber: "Bus #1",
-            startPoint: "Sadar Cantt Market",
-            destination: "IIITDMJ Main Gate",
-            via: "High Court Chowk",
-            status: "IN PROGRESS"
-          },
-          {
-            id: "TRIP-003",
-            departureTime: "05:15 PM",
-            busNumber: "Bus #1",
-            startPoint: "IIITDMJ Main Gate",
-            destination: "Sadar Cantt Market",
-            via: "Russell Chowk, Kakartala",
-            status: "UPCOMING"
-          }
-        ]
+    // Determine user role and data from global state
+    function loadProfile() {
+      if (!window.transitUser) {
+        window.location.href = '4th.html';
+        return;
       }
-    };
+      
+      const user = window.transitUser;
+      const userRole = user.role.toLowerCase();
 
-    // Determine user role from URL or default
-    const urlParams = new URLSearchParams(window.location.search);
-    const userRole = urlParams.get('role') || 'student';
-    const user = mockUsers[userRole] || mockUsers.student;
+      // Setup Logout button
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('transit_token');
+        localStorage.removeItem('transit_user');
+        window.location.href = '4th.html';
+      });
 
-    function renderProfile() {
       // Update role chip
       const roleChip = document.getElementById('roleChip');
       roleChip.className = userRole === 'conductor' 
@@ -391,20 +356,25 @@
 
       // Update profile name
       document.getElementById('profileName').textContent = user.name;
+      
+      // Update initials
+      const initials = user.name ? user.name.substring(0, 2).toUpperCase() : 'US';
+      const profileImage = document.getElementById('profileImage');
+      profileImage.innerHTML = `<span class="text-4xl font-bold text-transit-blue-glow">${initials}</span>`;
 
       if (userRole === 'student') {
-        document.getElementById('profileSubtitle').textContent = `Roll: ${user.rollNumber}`;
-        renderStudentProfile();
+        document.getElementById('profileSubtitle').textContent = `Roll: ${user.rollNumber || 'N/A'}`;
+        renderStudentProfile(user);
       } else {
         document.getElementById('profileSubtitle').textContent = 'Fleet Operations';
-        renderConductorProfile();
+        renderConductorProfile(user);
       }
 
       // Render profile details sidebar
-      renderProfileDetails();
+      renderProfileDetails(user, userRole);
     }
 
-    function renderProfileDetails() {
+    function renderProfileDetails(user, userRole) {
       const profileDetails = document.getElementById('profileDetails');
       let details = '';
 
@@ -412,30 +382,30 @@
         details = `
           <div>
             <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">EMAIL</span>
-            <p class="text-body-sm text-primary font-medium break-all">${user.instituteEmail}</p>
+            <p class="text-body-sm text-primary font-medium break-all">${user.email}</p>
           </div>
           <div>
             <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">ROLL NUMBER</span>
-            <p class="text-body-sm text-primary font-medium">${user.rollNumber}</p>
+            <p class="text-body-sm text-primary font-medium">${user.rollNumber || 'N/A'}</p>
           </div>
           <div>
             <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">SESSION ID</span>
-            <p class="text-label-mono font-label-mono text-primary font-bold text-sm">${user.activeSessionId}</p>
+            <p class="text-label-mono font-label-mono text-primary font-bold text-sm">#JBP-TR-8821</p>
           </div>
         `;
       } else {
         details = `
           <div>
-            <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">PHONE</span>
-            <p class="text-body-sm text-primary font-medium">${user.phone}</p>
+            <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">EMAIL</span>
+            <p class="text-body-sm text-primary font-medium">${user.email}</p>
           </div>
           <div>
             <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">BUS NUMBER</span>
-            <p class="text-body-sm text-primary font-medium">${user.busNumber}</p>
+            <p class="text-body-sm text-primary font-medium">Assigned on Duty</p>
           </div>
           <div>
-            <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">REGISTRATION</span>
-            <p class="text-label-mono font-label-mono text-primary font-bold text-sm">${user.registrationNumber}</p>
+            <span class="text-label-mono-xs font-label-mono-xs text-outline block mb-1">SESSION</span>
+            <p class="text-label-mono font-label-mono text-primary font-bold text-sm">Active</p>
           </div>
         `;
       }
@@ -443,72 +413,90 @@
       profileDetails.innerHTML = details;
     }
 
-    function renderStudentProfile() {
+    function renderStudentProfile(user) {
       document.getElementById('studentCard').classList.remove('hidden');
       document.getElementById('conductorCard').classList.add('hidden');
       document.getElementById('dutyTripsCard').classList.add('hidden');
 
       document.getElementById('studentName').textContent = user.name;
-      document.getElementById('studentEmail').textContent = user.instituteEmail;
-      document.getElementById('studentRoll').textContent = user.rollNumber;
-      document.getElementById('studentSessionId').textContent = user.activeSessionId;
+      document.getElementById('studentEmail').textContent = user.email;
+      document.getElementById('studentRoll').textContent = user.rollNumber || 'N/A';
+      document.getElementById('studentSessionId').textContent = 'Live Session Active';
     }
 
-    function renderConductorProfile() {
+    function renderConductorProfile(user) {
       document.getElementById('conductorCard').classList.remove('hidden');
       document.getElementById('studentCard').classList.add('hidden');
       document.getElementById('dutyTripsCard').classList.remove('hidden');
 
       document.getElementById('conductorName').textContent = user.name;
       document.getElementById('conductorRole').textContent = 'Conductor / Driver';
-      document.getElementById('conductorPhone').textContent = user.phone;
-      document.getElementById('conductorBus').textContent = user.busNumber;
-      document.getElementById('conductorRegistration').textContent = user.registrationNumber;
+      document.getElementById('conductorPhone').textContent = user.email; // Using email in place of phone for now
+      document.getElementById('conductorBus').textContent = 'Check Schedule';
+      document.getElementById('conductorRegistration').textContent = 'N/A';
 
-      renderDutyTrips();
+      fetchAndRenderDutyTrips();
     }
 
-    function renderDutyTrips() {
+    async function fetchAndRenderDutyTrips() {
       const tripsList = document.getElementById('dutyTripsList');
+      tripsList.innerHTML = '<div class="p-4 text-center">Loading duty schedule...</div>';
       
-      tripsList.innerHTML = user.dutyTrips.map(trip => {
-        let statusClass = 'status-gold';
-        let statusIcon = 'schedule';
-        let statusText = 'UPCOMING';
-
-        if (trip.status === 'COMPLETED') {
-          statusClass = 'status-mint-glow';
-          statusIcon = 'check_circle';
-          statusText = 'COMPLETED';
-        } else if (trip.status === 'IN PROGRESS') {
-          statusClass = 'status-gold';
-          statusIcon = 'play_circle';
-          statusText = 'IN PROGRESS';
+      try {
+        const res = await window.apiFetch('/api/conductor/trips');
+        if (!res.ok) throw new Error('Failed to fetch trips');
+        const trips = await res.json();
+        
+        if (trips.length === 0) {
+            tripsList.innerHTML = '<div class="p-4 text-center">No trips scheduled for today.</div>';
+            return;
         }
 
-        return `
-          <div class="p-space-md hover:bg-surface-container-low transition-colors">
-            <div class="flex items-start justify-between mb-space-sm">
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="inline-block px-2 py-0.5 rounded-full bg-transit-blue-subtle text-secondary font-label-mono-xs font-label-mono-xs font-bold">${trip.busNumber}</span>
-                  <span class="text-title-sm font-title-sm text-primary font-bold">${trip.departureTime}</span>
+        tripsList.innerHTML = trips.map(trip => {
+          let statusClass = 'status-gold';
+          let statusIcon = 'schedule';
+          let statusText = trip.status;
+
+          if (trip.status === 'COMPLETED') {
+            statusClass = 'status-mint-glow';
+            statusIcon = 'check_circle';
+          } else if (trip.status === 'ACTIVE') {
+            statusClass = 'status-gold';
+            statusIcon = 'play_circle';
+          }
+
+          return `
+            <div class="p-space-md hover:bg-surface-container-low transition-colors">
+              <div class="flex items-start justify-between mb-space-sm">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="inline-block px-2 py-0.5 rounded-full bg-transit-blue-subtle text-secondary font-label-mono-xs font-label-mono-xs font-bold">${trip.bus.busNumber}</span>
+                    <span class="text-title-sm font-title-sm text-primary font-bold">${trip.departureTime}</span>
+                  </div>
+                  <p class="text-body-sm text-on-surface-variant"><strong>${trip.route.origin}</strong> → <strong>${trip.route.destination}</strong></p>
+                  <p class="text-label-mono-xs text-on-surface-variant mt-1">Passengers: ${trip.tickets ? trip.tickets.length : 0} booked</p>
                 </div>
-                <p class="text-body-sm text-on-surface-variant"><strong>${trip.startPoint}</strong> → <strong>${trip.destination}</strong></p>
-                <p class="text-label-mono-xs text-on-surface-variant mt-1">Via: ${trip.via}</p>
-              </div>
-              <div class="flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-low border border-outline-variant/40">
-                <span class="material-symbols-outlined text-sm" style="color: var(--color-${statusClass}, #F59E0B)">${statusIcon}</span>
-                <span class="text-label-mono-xs font-label-mono-xs text-on-surface font-bold">${statusText}</span>
+                <div class="flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-low border border-outline-variant/40">
+                  <span class="material-symbols-outlined text-sm" style="color: var(--color-${statusClass}, #F59E0B)">${statusIcon}</span>
+                  <span class="text-label-mono-xs font-label-mono-xs text-on-surface font-bold">${statusText}</span>
+                </div>
               </div>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+        tripsList.innerHTML = '<div class="p-4 text-center text-error">Could not load trips.</div>';
+      }
     }
 
-    // Initialize on load
-    document.addEventListener('DOMContentLoaded', renderProfile);
+    // Initialize on load, state.js loads before this usually but wait a tick for safe measure
+    window.addEventListener('load', () => {
+      setTimeout(loadProfile, 100);
+    });
   </script>
+<script src="state.js"></script>
 </body>
 </html>
+
+

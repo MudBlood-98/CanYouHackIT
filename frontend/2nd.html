@@ -212,18 +212,18 @@
 </div>
 <!-- Desktop Nav Cluster -->
 <nav class="hidden md:flex items-center space-x-6">
-<a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="4th.html">Live Dashboard</a>
-<a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="4th.html">Timetable</a>
+<a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="1st.html">Live Dashboard</a>
+<a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="1st.html#timetable">Timetable</a>
 <a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="3rd.html">Quick Booking</a>
 <a class="text-transit-blue-glow dark:text-secondary-fixed border-b-2 border-transit-blue-glow dark:border-secondary-fixed pb-1 font-semibold" href="2nd.html">My Passes</a>
 </nav>
 <!-- Trailing Action Badges -->
 <div class="flex items-center gap-space-sm">
 
-<button aria-label="Notifications" class="p-2 text-on-primary-container hover:text-transit-blue-glow active:scale-95 transition-transform duration-100" type="button">
+<button aria-label="Notifications" class="p-2 text-on-primary-container hover:text-transit-blue-glow active:scale-95 transition-transform duration-100" type="button" onclick="window.location.href='notifications.html'">
 <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
 </button>
-<button aria-label="Student Profile" class="p-1 text-on-primary-container hover:text-transit-blue-glow active:scale-95 transition-transform duration-100" type="button">
+<button aria-label="Student Profile" class="p-1 text-on-primary-container hover:text-transit-blue-glow active:scale-95 transition-transform duration-100" type="button" onclick="window.location.href='account.html'">
 <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
 </button>
 </div>
@@ -281,129 +281,10 @@
 </div>
 </div>
 </div>
-<!-- MAIN PHYSICAL-METAPHOR VERIFIED PASS -->
-<div class="w-full bg-surface-card rounded-xl border border-slate-200 shadow-xl overflow-hidden relative animate-telemetry-glow">
-<!-- Continuous Color-Shift Ribbon (Anti-Counterfeit Bar) -->
-<div class="h-3 w-full animate-hologram-strip"></div>
-<!-- Ticket Top Sector: Status & Priority Pass -->
-<div class="p- space-md md:p-space-lg bg-surface-card relative">
-<!-- Header Ribbon: VALID TICKET Stamp + Pass Type -->
-<div class="flex flex-wrap items-center justify-between gap-3 pb-space-md border-b border-slate-100">
-<!-- Animated Stamp -->
-<div class="flex items-center gap-2.5 bg-status-mint-subtle border-2 border-status-mint-glow/80 px-3.5 py-1.5 rounded-lg shadow-sm">
-<span class="material-symbols-outlined text-tertiary-container font-bold text-xl" data-icon="verified">verified</span>
-<div>
-<span class="font-headline-md text-headline-md font-bold text-tertiary-container tracking-wider">VALID TICKET</span>
-<span class="block text-label-mono-xs font-label-mono-xs text-tertiary font-semibold">INSTITUTE SYSTEM CONFIRMED</span>
-</div>
-</div>
-<!-- Ticket ID Code -->
-<div class="text-right">
-<span class="text-label-mono-xs font-label-mono-xs text-outline uppercase block">Unique Ticket ID</span>
-<span class="font-ticker-md text-ticker-md text-primary font-bold tracking-tight">TKT-2025-0515-8821B</span>
-</div>
-</div>
-<!-- Priority Return Pass Glowing Golden Badge -->
-<div class="mt-space-md p-3.5 rounded-lg bg-status-gold-light/60 border border-status-gold/50 flex items-start gap-3 relative overflow-hidden">
-<div class="p-2 rounded bg-status-gold text-on-primary">
-<span class="material-symbols-outlined text-xl" data-icon="stars">stars</span>
-</div>
-<div class="flex-1">
-<div class="flex items-center gap-2">
-<span class="font-title-sm text-title-sm font-bold text-institute-navy-dark">Priority Return Pass</span>
-<span class="bg-status-gold/30 text-institute-navy-dark text-label-mono-xs font-label-mono-xs px-2 py-0.5 rounded-full font-bold">RETURN TIER-1</span>
-</div>
-<p class="text-body-sm text-body-sm text-institute-navy-mid mt-0.5">
-              Priority Return Passenger (Outward trip completed at 10:15 AM - Eligible for priority boarding on return to campus).
-            </p>
-</div>
-</div>
-<!-- Passenger Metadata Bento Grid -->
-<div class="mt-space-lg grid grid-cols-1 md:grid-cols-3 gap-3 bg-surface-canvas p-space-md rounded-lg border border-slate-200/80">
-<div class="flex items-center gap-3">
-<div class="w-12 h-12 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold font-headline-md">
-              AS
-            </div>
-<div>
-<span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Passenger Name</span>
-<p class="font-title-sm text-title-sm font-bold text-primary">Aryan Sharma</p>
-<span class="text-body-sm text-body-sm text-on-surface-variant">Roll No: 2022CS104</span>
-</div>
-</div>
-<div class="border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4">
-<span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Academic Credential</span>
-<p class="font-title-sm text-title-sm font-semibold text-primary">B.Tech CSE (Year 3)</p>
-<div class="flex items-center gap-1 text-label-mono-xs font-label-mono-xs text-tertiary-fixed-dim font-bold mt-0.5">
-<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
-<span class="text-institute-navy-mid">Institute ID Verified</span>
-</div>
-</div>
-<div class="border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4">
-<span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Assigned Conductor</span>
-<p class="font-title-sm text-title-sm font-semibold text-primary">Mr. Tilak Singh</p>
-<span class="text-body-sm text-body-sm text-on-surface-variant">Badge: #EMP-0412 (Fleet Bay 1)</span>
-</div>
-</div>
-</div>
-<!-- Physical Ticket Perforation Line with negative cutout geometry -->
-<div class="relative py-2 bg-surface-card">
-<div class="ticket-perforation-left"></div>
-<div class="ticket-perforation-right"></div>
-<div class="border-t-2 border-dashed border-slate-300 w-full"></div>
-</div>
-<!-- Ticket Bottom Sector: Transit Telemetry & Vehicle Details -->
-<div class="p-space-md md:p-space-lg bg-surface-container-low/50">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md items-center">
-<!-- Route Vector -->
-<div class="space-y-3">
-<div>
-<span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Transit Route Vector</span>
-<div class="flex items-center gap-2 mt-1">
-<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-label-mono text-label-mono font-bold">ROUTE 01</span>
-<span class="font-headline-md text-headline-md font-bold text-primary">Campus Central Circle</span>
-<span class="material-symbols-outlined text-secondary" data-icon="arrow_forward">arrow_forward</span>
-<span class="font-headline-md text-headline-md font-bold text-secondary">Sadar Market</span>
-</div>
-</div>
-<!-- Via Stops Timeline Pill -->
-<div class="flex items-center gap-2 text-body-sm text-body-sm text-institute-navy-mid bg-white p-2.5 rounded-lg border border-slate-200">
-<span class="material-symbols-outlined text-secondary" data-icon="alt_route">alt_route</span>
-<span><strong>Via:</strong> Russel Chowk &amp; Kakartala-Gadheri</span>
-</div>
-<!-- Vehicle & Bay Specs -->
-<div class="grid grid-cols-2 gap-2 text-xs">
-<div class="bg-white p-2 rounded border border-slate-200">
-<span class="text-label-mono-xs font-label-mono-xs text-outline block">ASSIGNED VEHICLE</span>
-<span class="font-bold text-primary font-ticker-md text-body-md">Bus No. 1</span>
-<span class="text-on-surface-variant block text-label-mono-xs font-label-mono-xs">MP20 ZL1297</span>
-</div>
-<div class="bg-white p-2 rounded border border-slate-200">
-<span class="text-label-mono-xs font-label-mono-xs text-outline block">SCHEDULED DEPARTURE</span>
-<span class="font-bold text-secondary font-ticker-md text-body-md">05:15 PM</span>
-<span class="text-on-surface-variant block text-label-mono-xs font-label-mono-xs">Bay 1 (Central Circle)</span>
-</div>
-</div>
-</div>
-<!-- QR Verification for Conductor -->
-<div class="flex flex-col items-center justify-center p-space-md bg-institute-navy-dark text-on-primary rounded-xl border border-secondary/30 relative">
-<div class="text-center mb-3">
-<span class="text-label-mono-xs font-label-mono-xs tracking-wider text-status-mint-glow font-bold uppercase block">
-                SCAN TO VERIFY TICKET
-              </span>
-<span class="text-xs text-outline-variant">Scan the QR code using the conductor terminal</span>
-</div>
-<div class="bg-white p-3 rounded-xl shadow-lg border-2 border-transit-blue-glow">
-<div id="ticketQR" class="w-36 h-36 flex items-center justify-center"></div>
-</div>
-<div class="mt-3 text-center">
-<span class="inline-block px-3 py-1 rounded-full bg-surface-variant/20 text-secondary-fixed text-xs font-semibold border border-surface-glass-border">
-                QR Key: <span id="qrKey">IIITDMJ-TKT-2025-0515-8821B</span>
-              </span>
-</div>
-</div>
-</div>
-</div>
-</div>
+        <!-- TICKETS CONTAINER -->
+        <div id="tickets-container" class="w-full space-y-6">
+            <div class="text-center py-10 text-on-surface-variant animate-pulse">Loading passes...</div>
+        </div>
 <!-- MISSION-CRITICAL BOTTOM ACTION BAR -->
 <div class="w-full mt-space-lg flex flex-col sm:flex-row items-center justify-between gap-3">
 <!-- Primary Option: Backup QR Code Viewer -->
@@ -422,7 +303,7 @@
 <span class="material-symbols-outlined text-base" data-icon="download">download</span>
 <span>Download PDF</span>
 </button>
-<a class="flex-1 sm:flex-none px-4 py-3 rounded-lg bg-surface-card border border-slate-300 hover:bg-slate-50 text-institute-navy-dark font-medium text-body-md flex items-center justify-center gap-1.5 active:scale-95 transition-all text-center" href="#timetable">
+<a class="flex-1 sm:flex-none px-4 py-3 rounded-lg bg-surface-card border border-slate-300 hover:bg-slate-50 text-institute-navy-dark font-medium text-body-md flex items-center justify-center gap-1.5 active:scale-95 transition-all text-center" href="1st.html#timetable">
 <span class="material-symbols-outlined text-base" data-icon="calendar_month">calendar_month</span>
 <span>Fleet Schedule</span>
 </a>
@@ -441,9 +322,9 @@
 </div>
 <!-- Footer Navigation Links -->
 <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-body-sm font-body-sm">
-<a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#fleet">Campus Fleet Portal</a>
-<a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#directory">Route Map Directory</a>
-<a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#conductor">Conductor Terminal</a>
+<a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="1st.html">Campus Fleet Portal</a>
+<a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="1st.html">Route Map Directory</a>
+<a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="conductor.html">Conductor Terminal</a>
 <a class="text-outline-variant dark:text-on-surface-variant hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#support">Support Desk</a>
 <a class="text-transit-blue-glow dark:text-secondary-fixed font-semibold hover:text-transit-blue-glow dark:hover:text-secondary-fixed-dim transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-secondary-container" href="#verification">Security Verification</a>
 </nav>
@@ -466,14 +347,155 @@
       }
       requestAnimationFrame(updateClock);
     }
-    const verificationKey = "IIITDMJ-TKT-2025-0515-8821B";
-    new QRCode(document.getElementById("ticketQR"), {
-      text: verificationKey,
-      width: 144,
-      height: 144,
-      correctLevel: QRCode.CorrectLevel.H
-    });
-
     requestAnimationFrame(updateClock);
+
+    async function loadMyTickets() {
+      try {
+        const res = await window.apiFetch('/api/bookings/my-tickets');
+        if (!res.ok) throw new Error('Failed to load tickets');
+        const tickets = await res.json();
+        
+        const container = document.getElementById('tickets-container');
+        container.innerHTML = '';
+        
+        if (tickets.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-10 bg-surface-card rounded-xl border border-slate-200 shadow-xl">
+                    <span class="material-symbols-outlined text-4xl text-outline-variant mb-3">airplane_ticket</span>
+                    <h3 class="text-headline-md font-bold text-primary">No Active Passes</h3>
+                    <p class="text-body-md text-on-surface-variant mt-2">You don't have any upcoming trips.</p>
+                    <button class="mt-4 px-4 py-2 bg-primary text-on-primary rounded hover:bg-institute-navy-mid transition" onclick="window.location.href='1st.html'">Book a Trip</button>
+                </div>
+            `;
+            return;
+        }
+
+        tickets.forEach(ticket => {
+            const t = document.createElement('div');
+            t.className = "w-full bg-surface-card rounded-xl border border-slate-200 shadow-xl overflow-hidden relative animate-telemetry-glow";
+            const userInitials = window.transitUser ? (window.transitUser.name.substring(0,2).toUpperCase()) : 'US';
+            const userName = window.transitUser ? window.transitUser.name : 'Student';
+            const userEmail = window.transitUser ? window.transitUser.email : '';
+            
+            // Generate QR ID
+            const qrId = 'qr-' + ticket.id;
+            
+            t.innerHTML = `
+                <!-- Continuous Color-Shift Ribbon (Anti-Counterfeit Bar) -->
+                <div class="h-3 w-full animate-hologram-strip"></div>
+                <!-- Ticket Top Sector: Status & Priority Pass -->
+                <div class="p-space-md md:p-space-lg bg-surface-card relative">
+                <!-- Header Ribbon: VALID TICKET Stamp + Pass Type -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-space-md border-b border-slate-100">
+                <!-- Animated Stamp -->
+                <div class="flex items-center gap-2.5 bg-status-mint-subtle border-2 border-status-mint-glow/80 px-3.5 py-1.5 rounded-lg shadow-sm">
+                <span class="material-symbols-outlined text-tertiary-container font-bold text-xl" data-icon="verified">verified</span>
+                <div>
+                <span class="font-headline-md text-headline-md font-bold text-tertiary-container tracking-wider">${ticket.status}</span>
+                <span class="block text-label-mono-xs font-label-mono-xs text-tertiary font-semibold">INSTITUTE SYSTEM CONFIRMED</span>
+                </div>
+                </div>
+                <!-- Ticket ID Code -->
+                <div class="text-right">
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase block">Unique Ticket ID</span>
+                <span class="font-ticker-md text-ticker-md text-primary font-bold tracking-tight">${ticket.ticketNumber}</span>
+                </div>
+                </div>
+                <!-- Passenger Metadata Bento Grid -->
+                <div class="mt-space-lg grid grid-cols-1 md:grid-cols-3 gap-3 bg-surface-canvas p-space-md rounded-lg border border-slate-200/80">
+                <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold font-headline-md">
+                            ${userInitials}
+                            </div>
+                <div>
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Passenger Name</span>
+                <p class="font-title-sm text-title-sm font-bold text-primary">${userName}</p>
+                <span class="text-body-sm text-body-sm text-on-surface-variant">${userEmail}</span>
+                </div>
+                </div>
+                <div class="border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4">
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Seat Allocation</span>
+                <p class="font-title-sm text-title-sm font-semibold text-primary">Seat No: ${ticket.booking.seatNumber}</p>
+                <div class="flex items-center gap-1 text-label-mono-xs font-label-mono-xs text-tertiary-fixed-dim font-bold mt-0.5">
+                <span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                <span class="text-institute-navy-mid">Booking Ref: ${ticket.booking.bookingReference}</span>
+                </div>
+                </div>
+                <div class="border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4">
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Trip Date</span>
+                <p class="font-title-sm text-title-sm font-semibold text-primary">${new Date(ticket.trip.tripDate).toLocaleDateString()}</p>
+                <span class="text-body-sm text-body-sm text-on-surface-variant">Type: ${ticket.trip.tripType}</span>
+                </div>
+                </div>
+                </div>
+                <!-- Physical Ticket Perforation Line with negative cutout geometry -->
+                <div class="relative py-2 bg-surface-card">
+                <div class="ticket-perforation-left"></div>
+                <div class="ticket-perforation-right"></div>
+                <div class="border-t-2 border-dashed border-slate-300 w-full"></div>
+                </div>
+                <!-- Ticket Bottom Sector: Transit Telemetry & Vehicle Details -->
+                <div class="p-space-md md:p-space-lg bg-surface-container-low/50">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md items-center">
+                <!-- Route Vector -->
+                <div class="space-y-3">
+                <div>
+                <span class="text-label-mono-xs font-label-mono-xs text-outline uppercase">Transit Route Vector</span>
+                <div class="flex items-center gap-2 mt-1">
+                <span class="font-headline-md text-headline-md font-bold text-primary">${ticket.trip.route.origin}</span>
+                <span class="material-symbols-outlined text-secondary" data-icon="arrow_forward">arrow_forward</span>
+                <span class="font-headline-md text-headline-md font-bold text-secondary">${ticket.trip.route.destination}</span>
+                </div>
+                </div>
+                <!-- Vehicle & Bay Specs -->
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-white p-2 rounded border border-slate-200">
+                <span class="text-label-mono-xs font-label-mono-xs text-outline block">ASSIGNED VEHICLE</span>
+                <span class="font-bold text-primary font-ticker-md text-body-md">${ticket.trip.bus.busNumber}</span>
+                <span class="text-on-surface-variant block text-label-mono-xs font-label-mono-xs">${ticket.trip.bus.licensePlate}</span>
+                </div>
+                <div class="bg-white p-2 rounded border border-slate-200">
+                <span class="text-label-mono-xs font-label-mono-xs text-outline block">SCHEDULED DEPARTURE</span>
+                <span class="font-bold text-secondary font-ticker-md text-body-md">${ticket.trip.departureTime}</span>
+                <span class="text-on-surface-variant block text-label-mono-xs font-label-mono-xs">ETA: ${ticket.trip.arrivalTime}</span>
+                </div>
+                </div>
+                </div>
+                <!-- QR Verification for Conductor -->
+                <div class="flex flex-col items-center justify-center p-space-md bg-institute-navy-dark text-on-primary rounded-xl border border-secondary/30 relative">
+                <div class="text-center mb-3">
+                <span class="text-label-mono-xs font-label-mono-xs tracking-wider text-status-mint-glow font-bold uppercase block">SCAN TO VERIFY TICKET</span>
+                </div>
+                <div class="bg-white p-3 rounded-xl shadow-lg border-2 border-transit-blue-glow">
+                <div id="${qrId}" class="w-36 h-36 flex items-center justify-center"></div>
+                </div>
+                <div class="mt-3 text-center">
+                <span class="inline-block px-3 py-1 rounded-full bg-surface-variant/20 text-secondary-fixed text-xs font-semibold border border-surface-glass-border">
+                                QR Key: <span>${ticket.ticketNumber}</span>
+                            </span>
+                </div>
+                </div>
+                </div>
+                </div>
+            `;
+            container.appendChild(t);
+            
+            // Generate QR Code inside the container
+            new QRCode(document.getElementById(qrId), {
+              text: ticket.qrPayload,
+              width: 144,
+              height: 144,
+              correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('tickets-container').innerHTML = `<div class="text-center py-10 text-error font-bold">Failed to load tickets. Please refresh.</div>`;
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadMyTickets);
   </script>
+<script src="state.js"></script>
 </body></html>
+

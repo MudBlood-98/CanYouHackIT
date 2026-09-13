@@ -237,9 +237,9 @@
 </div>
 </div>
 <!-- Layout Grid: Left (Trip & Fare Summary), Right (Direct Payment Gateway) -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start min-w-0">
 <!-- LEFT COLUMN: Booking Summary & Policy (5 cols on Desktop) -->
-<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="lg:col-span-5 flex flex-col gap-6 min-w-0">
 <!-- Physical Ticket Metaphor: Booking Details Card -->
 <div class="bg-surface-card rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden relative">
 <!-- Top Card Header Banner -->
@@ -284,10 +284,10 @@
 <div class="p-5 bg-surface-container-low/60 grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-outline-variant/30">
 <div>
 <span class="text-label-mono-xs font-label-mono-xs text-outline block">DEPARTURE SCHEDULE</span>
-<p class="text-title-sm font-title-sm font-semibold text-primary mt-0.5">Today, 05:15 PM</p>
+<p id="selected-trip-departure" class="text-title-sm font-title-sm font-semibold text-primary mt-0.5">Loading schedule...</p>
 <p class="text-label-mono-xs font-label-mono-xs text-error font-medium flex items-center gap-1 mt-0.5">
 <span class="material-symbols-outlined text-xs" data-icon="lock_clock">lock_clock</span>
-                Boarding closes 05:10 PM
+                <span id="selected-trip-boarding-close">Boarding closes at departure</span>
               </p>
 </div>
 <div>
@@ -367,7 +367,7 @@
 </div>
 </div>
 <!-- RIGHT COLUMN: Direct Conductor UPI Payment Gateway (7 cols on Desktop) -->
-<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="lg:col-span-7 flex flex-col gap-6 min-w-0">
 <div class="bg-surface-card rounded-xl border border-outline-variant/50 shadow-md p-6 sm:p-8 relative overflow-hidden">
 <!-- Background Subtle Gradient Ring Accent -->
 <div class="absolute -right-20 -top-20 w-64 h-64 bg-secondary-fixed-dim/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -667,9 +667,21 @@
             const trip = trips.find(t => t.id === tripId);
             
             if (trip) {
-                // We could dynamically update the UI elements here based on 'trip'
-                // For simplicity, we just store activeTripId and assume UI is mostly static or adapt it slightly
-                console.log('Loaded trip:', trip);
+              const departure = new Date(trip.departureAt || `${trip.tripDate}T${trip.departureTime}:00+05:30`);
+              const departureText = departure.toLocaleString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                weekday: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              const boardingClose = new Date(departure.getTime() - 5 * 60 * 1000);
+              const boardingCloseText = boardingClose.toLocaleTimeString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              document.getElementById('selected-trip-departure').textContent = departureText;
+              document.getElementById('selected-trip-boarding-close').textContent = `Boarding closes ${boardingCloseText}`;
             } else {
                 alert('Trip not found or booking closed.');
                 window.location.href = '1st.html';

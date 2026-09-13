@@ -200,8 +200,8 @@
           <span class="text-label-mono-xs font-label-mono-xs text-primary-fixed/80">Badge: #EMP-0412</span>
         </div>
         <div class="flex items-center gap-1 text-on-primary-container">
-          <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications"><span class="material-symbols-outlined">notifications</span></button>
-          <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Profile"><span class="material-symbols-outlined">account_circle</span></button>
+          <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications" onclick="window.location.href='notifications.html'"><span class="material-symbols-outlined">notifications</span></button>
+          <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Profile" onclick="window.location.href='account.html?role=conductor'"><span class="material-symbols-outlined">account_circle</span></button>
         </div>
       </div>
     </div>
@@ -388,59 +388,7 @@
   </footer>
 
   <script>
-    // Mock Data: Buses with scheduled routes
-    const busSchedule = [
-      {
-        id: 1,
-        busNumber: "Bus #1",
-        licensePlate: "MP20 ZL1297",
-        route: "Institute → Sadar",
-        departure: "08:30 AM",
-        arrival: "09:00 AM",
-        capacity: 50,
-        status: "active",
-        stops: ["LHTC", "Admin Block", "Sadar Junction"],
-        passengers: [
-          { id: 1, name: "Aryan Sharma", roll: "2022CS104", status: "boarded", boardTime: "08:35 AM" },
-          { id: 2, name: "Riya Patel", roll: "2021EE212", status: "pending", boardTime: null },
-          { id: 3, name: "Vikram Singh", roll: "2022ME103", status: "boarded", boardTime: "08:34 AM" },
-          { id: 4, name: "Priya Verma", roll: "2023CS205", status: "pending", boardTime: null },
-          { id: 5, name: "Rohit Kumar", roll: "2021EE215", status: "boarded", boardTime: "08:36 AM" }
-        ]
-      },
-      {
-        id: 2,
-        busNumber: "Bus #2",
-        licensePlate: "MP21 XY5678",
-        route: "Campus → Junction",
-        departure: "09:00 AM",
-        arrival: "09:30 AM",
-        capacity: 50,
-        status: "active",
-        stops: ["Campus Gate", "Medical Center", "Junction"],
-        passengers: [
-          { id: 6, name: "Shreya Gupta", roll: "2022CS106", status: "pending", boardTime: null },
-          { id: 7, name: "Aditya Patel", roll: "2021EE220", status: "pending", boardTime: null },
-          { id: 8, name: "Neha Singh", roll: "2022ME105", status: "boarded", boardTime: "09:02 AM" }
-        ]
-      },
-      {
-        id: 3,
-        busNumber: "Bus #3",
-        licensePlate: "MP22 AB1234",
-        route: "City Center → Institute",
-        departure: "10:00 AM",
-        arrival: "10:45 AM",
-        capacity: 50,
-        status: "scheduled",
-        stops: ["City Center", "Main Road", "Institute Gate"],
-        passengers: [
-          { id: 9, name: "Rahul Deshmukh", roll: "2022CS108", status: "pending", boardTime: null },
-          { id: 10, name: "Ananya Kapoor", roll: "2021EE225", status: "pending", boardTime: null }
-        ]
-      }
-    ];
-
+    let busSchedule = [];
     let selectedBusId = null;
     let allPassengers = [];
     let filteredPassengers = [];
@@ -458,9 +406,62 @@
     const totalBusesSpan = document.getElementById('totalBuses');
 
     // Initialize
-    function init() {
-      totalBusesSpan.textContent = busSchedule.length;
-      renderBusList();
+    async function init() {
+      await fetchTrips();
+      // Setup live refresh
+      if (window.socket) {
+        window.socket.on('trip.passengers.updated', async (data) => {
+          await fetchTrips();
+          if (selectedBusId) {
+             selectBus(selectedBusId, true); // preserve selection silently
+          }
+        });
+      }
+    }
+
+    async function fetchTrips() {
+      try {
+        const response = await window.apiFetch('/api/conductor/trips');
+        if (response.ok) {
+           const rawTrips = await response.json();
+           // map rawTrips to the structure expected by the UI
+           busSchedule = rawTrips.map(t => {
+               const departsAt = new Date(`${t.tripDate}T${t.departureTime}:00+05:30`);
+               const isToday = departsAt.toDateString() === new Date().toDateString();
+               const isPast = departsAt < new Date();
+               
+               let status = 'scheduled';
+               if (t.status === 'ACTIVE') status = 'active';
+               else if (t.status === 'COMPLETED') status = 'completed';
+               
+               return {
+                   id: t.id,
+                   busNumber: t.bus.registrationNumber,
+                   licensePlate: `Cap: ${t.bus.capacity}`,
+                   route: t.route.name,
+                   departure: departsAt.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
+                   capacity: t.bus.capacity,
+                   status: status,
+                   passengers: t.tickets.map(tkt => ({
+                       id: tkt.id,
+                       ticketId: tkt.ticketNumber,
+                       name: tkt.user.name,
+                       roll: tkt.user.rollNumber,
+                       status: tkt.status === 'BOARDED' ? 'boarded' : 'pending',
+                       boardTime: tkt.boardedAt ? new Date(tkt.boardedAt).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : null
+                   }))
+               }
+           });
+           totalBusesSpan.textContent = busSchedule.length;
+           renderBusList();
+           if (!selectedBusId) {
+             const busWithPassengers = busSchedule.find(bus => bus.passengers.length > 0);
+             if (busWithPassengers) selectBus(busWithPassengers.id, true);
+           }
+        }
+      } catch (err) {
+        console.error('Failed to fetch trips', err);
+      }
     }
 
     // Render Bus List
@@ -491,14 +492,15 @@
 
       // Add click listeners
       document.querySelectorAll('.bus-card').forEach(card => {
-        card.addEventListener('click', () => selectBus(parseInt(card.dataset.busId)));
+        card.addEventListener('click', () => selectBus(card.dataset.busId));
       });
     }
 
     // Select Bus
-    function selectBus(busId) {
+    function selectBus(busId, silent = false) {
       selectedBusId = busId;
       const selectedBus = busSchedule.find(b => b.id === busId);
+      if (!selectedBus) return;
 
       // Update header
       document.getElementById('selectedBusNumber').textContent = selectedBus.busNumber;
@@ -511,6 +513,15 @@
       // Load passengers
       allPassengers = selectedBus.passengers;
       filteredPassengers = [...allPassengers];
+      
+      if (!silent) {
+         passengerSearch.value = '';
+         document.querySelectorAll('.passenger-filter-btn').forEach(btn => btn.classList.remove('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container'));
+         document.querySelector('[data-filter="all"].passenger-filter-btn').classList.add('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
+      } else {
+         applyPassengerFilter(); // re-apply filter logic quietly
+      }
+      
       updatePassengerStats();
       renderPassengers();
 
@@ -519,15 +530,10 @@
       busDetailsHeader.classList.remove('hidden');
       passengerContent.classList.remove('hidden');
       
-      // Reset filters
-      document.querySelectorAll('.passenger-filter-btn').forEach(btn => btn.classList.remove('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container'));
-      document.querySelector('[data-filter="all"].passenger-filter-btn').classList.add('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
-      passengerSearch.value = '';
-
       // Update bus list UI
       document.querySelectorAll('.bus-card').forEach(card => {
         card.classList.remove('bus-card-active');
-        if (parseInt(card.dataset.busId) === busId) {
+        if (card.dataset.busId === busId) {
           card.classList.add('bus-card-active');
         }
       });
@@ -557,7 +563,7 @@
           <td class="px-4 py-3">
             <div>
               <p class="font-title-sm font-bold text-primary">${passenger.name}</p>
-              <p class="text-label-mono-xs text-on-surface-variant">ID: ${passenger.id}</p>
+              <p class="text-label-mono-xs text-on-surface-variant">TKT: ${passenger.ticketId}</p>
             </div>
           </td>
           <td class="px-4 py-3">
@@ -571,11 +577,6 @@
           </td>
           <td class="px-4 py-3 text-center">
             <div class="flex justify-center gap-2">
-              ${passenger.status === 'pending' ? `
-                <button class="p-2 rounded-lg bg-primary-container text-on-primary hover:bg-institute-navy-mid transition-colors mark-boarded" data-passenger-id="${passenger.id}" title="Mark as boarded">
-                  <span class="material-symbols-outlined text-sm">check_circle</span>
-                </button>
-              ` : ''}
               <button class="p-2 rounded-lg bg-error text-on-error hover:opacity-80 transition-colors flag-ticket" data-passenger-id="${passenger.id}" title="Flag issue">
                 <span class="material-symbols-outlined text-sm">flag</span>
               </button>
@@ -585,23 +586,9 @@
       `).join('');
 
       // Add event listeners
-      document.querySelectorAll('.mark-boarded').forEach(btn => {
-        btn.addEventListener('click', () => markBoarded(parseInt(btn.dataset.passengerId)));
-      });
       document.querySelectorAll('.flag-ticket').forEach(btn => {
         btn.addEventListener('click', () => flagTicket(parseInt(btn.dataset.passengerId)));
       });
-    }
-
-    // Mark Passenger as Boarded
-    function markBoarded(passengerId) {
-      const passenger = allPassengers.find(p => p.id === passengerId);
-      if (passenger) {
-        passenger.status = 'boarded';
-        passenger.boardTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        updatePassengerStats();
-        renderPassengers();
-      }
     }
 
     // Flag Ticket for Issue
@@ -613,43 +600,60 @@
     passengerSearch.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();
       filteredPassengers = allPassengers.filter(p =>
-        p.name.toLowerCase().includes(query) || p.roll.toLowerCase().includes(query)
+        p.name.toLowerCase().includes(query) || p.roll.toLowerCase().includes(query) || p.ticketId.toLowerCase().includes(query)
       );
-      applyPassengerFilter();
+      applyPassengerFilter(true);
     });
 
     // Filter Passengers
     document.querySelectorAll('.passenger-filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      // replace clones to prevent duplicate bindings on re-render if I ever re-bind
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.addEventListener('click', () => {
         document.querySelectorAll('.passenger-filter-btn').forEach(b => {
           b.classList.remove('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
           b.classList.add('bg-surface-canvas', 'text-on-surface-variant', 'hover:bg-surface-container-low');
         });
-        btn.classList.add('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
-        btn.classList.remove('bg-surface-canvas', 'text-on-surface-variant', 'hover:bg-surface-container-low');
+        newBtn.classList.add('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
+        newBtn.classList.remove('bg-surface-canvas', 'text-on-surface-variant', 'hover:bg-surface-container-low');
         applyPassengerFilter();
       });
     });
 
-    function applyPassengerFilter() {
+    function applyPassengerFilter(skipSearch = false) {
       const filter = document.querySelector('.passenger-filter-btn.active')?.dataset.filter || 'all';
-      if (filter === 'all') {
-        filteredPassengers = [...allPassengers];
+      
+      let base = allPassengers;
+      if (skipSearch) {
+          // If we are filtering from the search box, the base is the search results.
       } else {
-        filteredPassengers = allPassengers.filter(p => p.status === filter);
+          // If we are clicking a button, we need to respect the search box too
+          const query = passengerSearch.value.toLowerCase();
+          base = allPassengers.filter(p => p.name.toLowerCase().includes(query) || p.roll.toLowerCase().includes(query) || p.ticketId.toLowerCase().includes(query));
+      }
+
+      if (filter === 'all') {
+        filteredPassengers = [...base];
+      } else {
+        filteredPassengers = base.filter(p => p.status === filter);
       }
       renderPassengers();
     }
 
     // Bus List Filter
     document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => {
           b.classList.remove('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
           b.classList.add('bg-surface-canvas', 'text-on-surface-variant', 'hover:bg-surface-container-low');
         });
-        btn.classList.add('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
-        btn.classList.remove('bg-surface-canvas', 'text-on-surface-variant', 'hover:bg-surface-container-low');
+        newBtn.classList.add('active', 'bg-transit-blue-subtle', 'text-secondary', 'border-secondary-container');
+        newBtn.classList.remove('bg-surface-canvas', 'text-on-surface-variant', 'hover:bg-surface-container-low');
         renderBusList();
       });
     });
@@ -666,5 +670,8 @@
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', init);
   </script>
+<script src="state.js"></script>
 </body>
 </html>
+
+

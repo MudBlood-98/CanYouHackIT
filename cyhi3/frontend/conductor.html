@@ -334,7 +334,13 @@
         const result = await response.json();
         
         if (response.ok && result.message === 'VALID') {
-            return { ok: true, data: { ...result, ticketId: JSON.parse(text).tkt } };
+          let ticketId = text;
+          try {
+            ticketId = JSON.parse(text).tkt || text;
+          } catch (parseError) {
+            // Manual validation accepts the displayed ticket number.
+          }
+          return { ok: true, data: { ...result, ticketId } };
         } else {
             return { ok: false, reason: result.reason || result.error || 'Validation failed' };
         }

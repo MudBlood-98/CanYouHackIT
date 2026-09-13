@@ -175,7 +175,7 @@
         <a class="text-on-primary-container dark:text-outline-variant font-medium hover:text-transit-blue-glow dark:hover:text-secondary-fixed transition-colors duration-150" href="3rd.html">Quick Booking</a>
       </nav>
       <div class="flex items-center gap-space-sm md:gap-space-md">
-        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications" aria-label="Notifications">
+        <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Notifications" aria-label="Notifications" onclick="window.location.href='notifications.html'">
           <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
         </button>
         <button class="p-1.5 rounded-lg hover:text-on-primary transition-colors" title="Account" aria-label="Account" onclick="window.location.href='account.html'">
@@ -341,7 +341,7 @@
     ];
 
     let currentFilter = 'all';
-    let notifications = JSON.parse(JSON.stringify(mockNotifications)); // Deep copy
+    let notifications = [];
 
     function getUnreadCount() {
       return notifications.filter(n => !n.read).length;
@@ -351,16 +351,29 @@
       return type === 'BOOKING_REMINDER' ? 'schedule' : 'directions_bus';
     }
 
-    function getNotificationMetadata(type, metadata) {
+    function getNotificationMetadata(type, notif) {
       if (type === 'BOOKING_REMINDER') {
-        return `BOOKING REMINDER • ${metadata.timeUntilBooking} BEFORE`;
+        return `BOOKING REMINDER`;
       } else {
-        return `TRIP ALERT • ${metadata.timeUntilDeparture} BEFORE`;
+        return `TRIP ALERT`;
       }
     }
 
     function getNotificationClass(type) {
       return type === 'BOOKING_REMINDER' ? 'notification-icon-booking' : 'notification-icon-departure';
+    }
+
+    async function loadNotifications() {
+      try {
+        const response = await window.apiFetch('/api/notifications');
+        if (response.ok) {
+          notifications = await response.json();
+          renderNotifications();
+          updateNotificationBadge();
+        }
+      } catch (err) {
+        console.error('Failed to load notifications', err);
+      }
     }
 
     function renderNotifications() {
@@ -390,8 +403,31 @@
       notificationsList.innerHTML = filtered.map(notif => {
         const notifClass = notif.read ? 'notification-read' : 'notification-unread';
         const iconClass = getNotificationClass(notif.type);
-        const metadata = getNotificationMetadata(notif.type, notif.metadata);
+        const metadata = getNotificationMetadata(notif.type, notif);
         const icon = getNotificationIcon(notif.type);
+        
+        let busNumber = "Bus";
+        let destination = "Unknown";
+        let departureTime = "";
+
+        if (notif.trip && notif.trip.bus) {
+          busNumber = notif.trip.bus.registrationNumber;
+        }
+        if (notif.trip && notif.trip.route) {
+          destination = notif.trip.route.destination;
+        }
+        if (notif.trip) {
+          departureTime = new Date(notif.trip.departureTime).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+        } else {
+            // Check metadata if it's there
+            let meta = {};
+            try {
+                if(notif.metadata) meta = JSON.parse(notif.metadata);
+            } catch(e){}
+            busNumber = meta.busNumber || busNumber;
+            destination = meta.destination || destination;
+            departureTime = meta.departureTime || departureTime;
+        }
 
         return `
           <div class="notification-card ${notifClass} bg-surface-card rounded-xl border border-outline-variant/40 p-space-md hover:shadow-md transition-all cursor-pointer overflow-hidden" data-notification-id="${notif.id}">
@@ -419,11 +455,11 @@
                   </span>
                   <span class="inline-flex items-center gap-1 text-label-mono-xs font-label-mono-xs text-outline">
                     <span class="material-symbols-outlined text-xs">directions_bus</span>
-                    ${notif.metadata.busNumber}
+                    ${busNumber}
                   </span>
                   <span class="inline-flex items-center gap-1 text-label-mono-xs font-label-mono-xs text-outline">
                     <span class="material-symbols-outlined text-xs">location_on</span>
-                    ${notif.metadata.destination}
+                    ${destination}
                   </span>
                 </div>
 
@@ -451,68 +487,92 @@
     function attachEventListeners() {
       // Filter tabs
       document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
+        // Remove existing listener to avoid duplicates on re-render
+        const newTab = tab.cloneNode(true);
+        tab.parentNode.replaceChild(newTab, tab);
+        
+        newTab.addEventListener('click', () => {
           document.querySelectorAll('.filter-tab').forEach(t => {
             t.classList.remove('active', 'bg-primary-container', 'text-on-primary');
             t.classList.add('bg-surface-card', 'border-outline-variant/40', 'text-on-surface-variant', 'hover:bg-surface-container-low');
           });
-          tab.classList.add('active', 'bg-primary-container', 'text-on-primary');
-          tab.classList.remove('bg-surface-card', 'border-outline-variant/40', 'text-on-surface-variant', 'hover:bg-surface-container-low');
-          currentFilter = tab.dataset.filter;
+          newTab.classList.add('active', 'bg-primary-container', 'text-on-primary');
+          newTab.classList.remove('bg-surface-card', 'border-outline-variant/40', 'text-on-surface-variant', 'hover:bg-surface-container-low');
+          currentFilter = newTab.dataset.filter;
           renderNotifications();
         });
       });
 
       // Mark all as read
-      document.getElementById('markAllRead').addEventListener('click', () => {
-        notifications.forEach(n => n.read = true);
-        renderNotifications();
-        updateNotificationBadge();
+      const markAllBtn = document.getElementById('markAllRead');
+      const newMarkAll = markAllBtn.cloneNode(true);
+      markAllBtn.parentNode.replaceChild(newMarkAll, markAllBtn);
+      
+      newMarkAll.addEventListener('click', async () => {
+        try {
+            await window.apiFetch('/api/notifications/read-all', { method: 'POST' });
+            notifications.forEach(n => n.read = true);
+            renderNotifications();
+            updateNotificationBadge();
+        } catch (e) { console.error(e); }
       });
 
       // Notification card actions
       document.querySelectorAll('.action-button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
           e.stopPropagation();
           const action = btn.dataset.action;
-          const cardId = btn.closest('.notification-card').dataset.notificationId;
+          const cardId = parseInt(btn.closest('.notification-card').dataset.notificationId, 10);
           const notification = notifications.find(n => n.id === cardId);
 
           if (action === 'view') {
             showNotificationDetails(notification);
           } else if (action === 'markread') {
-            notification.read = true;
-            renderNotifications();
-            updateNotificationBadge();
+            try {
+                await window.apiFetch(`/api/notifications/${cardId}/read`, { method: 'PATCH' });
+                notification.read = true;
+                renderNotifications();
+                updateNotificationBadge();
+            } catch (e) { console.error(e); }
           }
         });
       });
 
       // Notification card click (mark as read)
       document.querySelectorAll('.notification-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const cardId = card.dataset.notificationId;
+        card.addEventListener('click', async () => {
+          const cardId = parseInt(card.dataset.notificationId, 10);
           const notification = notifications.find(n => n.id === cardId);
           if (!notification.read) {
-            notification.read = true;
-            renderNotifications();
-            updateNotificationBadge();
+            try {
+                await window.apiFetch(`/api/notifications/${cardId}/read`, { method: 'PATCH' });
+                notification.read = true;
+                renderNotifications();
+                updateNotificationBadge();
+            } catch (e) { console.error(e); }
           }
         });
       });
     }
 
     function showNotificationDetails(notification) {
+      let meta = {};
+      try {
+          if(notification.metadata) meta = JSON.parse(notification.metadata);
+      } catch(e){}
+      
+      let busNumber = notification.trip?.bus?.registrationNumber || meta.busNumber || "Bus";
+      let destination = notification.trip?.route?.destination || meta.destination || "Unknown";
+      let departureTime = notification.trip ? new Date(notification.trip.departureTime).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : (meta.departureTime || "");
+        
       alert(`
 ${notification.title}
 
 ${notification.message}
 
-Bus: ${notification.metadata.busNumber}
-Destination: ${notification.metadata.destination}
-Time: ${notification.metadata.departureTime}
-
-${notification.type === 'BOOKING_REMINDER' ? 'Booking opens in: ' + notification.metadata.timeUntilBooking : 'Departs in: ' + notification.metadata.timeUntilDeparture}
+Bus: ${busNumber}
+Destination: ${destination}
+Time: ${departureTime}
       `);
     }
 
@@ -524,9 +584,11 @@ ${notification.type === 'BOOKING_REMINDER' ? 'Booking opens in: ' + notification
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-      renderNotifications();
-      updateNotificationBadge();
+      loadNotifications();
     });
   </script>
+<script src="state.js"></script>
 </body>
 </html>
+
+

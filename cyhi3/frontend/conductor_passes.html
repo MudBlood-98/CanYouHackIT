@@ -454,6 +454,10 @@
            });
            totalBusesSpan.textContent = busSchedule.length;
            renderBusList();
+           if (!selectedBusId) {
+             const busWithPassengers = busSchedule.find(bus => bus.passengers.length > 0);
+             if (busWithPassengers) selectBus(busWithPassengers.id, true);
+           }
         }
       } catch (err) {
         console.error('Failed to fetch trips', err);
@@ -488,7 +492,7 @@
 
       // Add click listeners
       document.querySelectorAll('.bus-card').forEach(card => {
-        card.addEventListener('click', () => selectBus(parseInt(card.dataset.busId)));
+        card.addEventListener('click', () => selectBus(card.dataset.busId));
       });
     }
 
@@ -529,7 +533,7 @@
       // Update bus list UI
       document.querySelectorAll('.bus-card').forEach(card => {
         card.classList.remove('bus-card-active');
-        if (parseInt(card.dataset.busId) === busId) {
+        if (card.dataset.busId === busId) {
           card.classList.add('bus-card-active');
         }
       });
